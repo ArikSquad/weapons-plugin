@@ -1,0 +1,5 @@
+name: guns
+version: '1.0-SNAPSHOT'
+main: eu.mikart.guns.Guns
+api-version: '1.21'
+authors: [ AriDev ]
