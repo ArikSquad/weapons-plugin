@@ -1,6 +1,6 @@
 package eu.mikart.guns.listener;
 
-import eu.mikart.guns.Guns;
+import eu.mikart.guns.WeaponsPlugin;
 import eu.mikart.guns.guns.Gun;
 import eu.mikart.guns.guns.GunType;
 import io.papermc.paper.persistence.PersistentDataContainerView;
@@ -20,8 +20,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-@SuppressWarnings("UnstableApiUsage")
-public class GunListener implements Listener {
+public class WeaponInteractionListener implements Listener {
 
 	private final Map<UUID, Map<String, Long>> lastFiredTimes = new HashMap<>();
 
@@ -35,11 +34,15 @@ public class GunListener implements Listener {
 
 		PersistentDataContainerView dataContainer = item.getPersistentDataContainer();
 
-		if (dataContainer.has(Objects.requireNonNull(NamespacedKey.fromString("gun", Guns.getInstance())))) {
+		if (dataContainer.has(Objects.requireNonNull(NamespacedKey.fromString("gun", WeaponsPlugin.getInstance())))) {
 			event.setCancelled(true);
 			Player shooter = event.getPlayer();
-			String gunId = dataContainer.get(NamespacedKey.fromString("gun", Guns.getInstance()), PersistentDataType.STRING);
-			Gun gun = Guns.gunManager.getGun(gunId);
+			String gunId = dataContainer.get(NamespacedKey.fromString("gun", WeaponsPlugin.getInstance()), PersistentDataType.STRING);
+			Gun gun = WeaponsPlugin.gunManager.getGun(gunId);
+
+			if (!gun.canExecute(shooter)) {
+				return;
+			}
 
 			long currentTime = System.currentTimeMillis();
 			UUID playerId = shooter.getUniqueId();
@@ -59,25 +62,25 @@ public class GunListener implements Listener {
 
 			boolean hasAmmo;
 			try {
-				hasAmmo = dataContainer.get(NamespacedKey.fromString("ammo", Guns.getInstance()), PersistentDataType.INTEGER) != null;
+				hasAmmo = dataContainer.get(NamespacedKey.fromString("ammo", WeaponsPlugin.getInstance()), PersistentDataType.INTEGER) != null;
 			} catch (IllegalArgumentException e) {
 				hasAmmo = false;
 			}
 
 			if (!hasAmmo) {
 				item.editPersistentDataContainer(pdc -> {
-					pdc.set(new NamespacedKey(Guns.getInstance(), "ammo"),
+					pdc.set(new NamespacedKey(WeaponsPlugin.getInstance(), "ammo"),
 							PersistentDataType.INTEGER,
 							gun.getAmmo());
 				});
 			} else {
-				int ammo = dataContainer.get(NamespacedKey.fromString("ammo", Guns.getInstance()), PersistentDataType.INTEGER);
+				int ammo = dataContainer.get(NamespacedKey.fromString("ammo", WeaponsPlugin.getInstance()), PersistentDataType.INTEGER);
 				if (ammo <= 0) {
 					shooter.sendMessage("Out of ammo!");
 					return;
 				}
 				item.editPersistentDataContainer(pdc -> {
-					pdc.set(NamespacedKey.fromString("ammo", Guns.getInstance()), PersistentDataType.INTEGER, ammo - 1);
+					pdc.set(NamespacedKey.fromString("ammo", WeaponsPlugin.getInstance()), PersistentDataType.INTEGER, ammo - 1);
 				});
 			}
 

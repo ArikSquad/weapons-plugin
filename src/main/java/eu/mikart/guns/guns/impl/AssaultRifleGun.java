@@ -1,5 +1,6 @@
 package eu.mikart.guns.guns.impl;
 
+import eu.mikart.guns.WeaponsPlugin;
 import eu.mikart.guns.guns.Gun;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,8 +11,8 @@ import org.bukkit.entity.Player;
 
 public class AssaultRifleGun extends Gun {
 
-	public AssaultRifleGun() {
-		super("assault", Component.text("AK-47").color(NamedTextColor.RED), "A classical gun", 5, 10, 8, 30, 0.2F);
+	public AssaultRifleGun(WeaponsPlugin plugin) {
+		super(plugin, "assault", Component.text("AK-47").color(NamedTextColor.RED), "A classical gun", 5, 10, 8, 30, 0.2F);
 		throughPlayers(true);
 		material(Material.IRON_SHOVEL);
 	}

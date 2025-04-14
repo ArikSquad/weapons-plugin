@@ -1,5 +1,5 @@
-name: guns
+name: weapons
 version: '1.0-SNAPSHOT'
-main: eu.mikart.guns.Guns
+main: eu.mikart.guns.WeaponsPlugin
 api-version: '1.21'
 authors: [ AriDev ]

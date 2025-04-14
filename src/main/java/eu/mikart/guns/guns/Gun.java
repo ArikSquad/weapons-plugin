@@ -1,6 +1,6 @@
 package eu.mikart.guns.guns;
 
-import eu.mikart.guns.Guns;
+import eu.mikart.guns.WeaponsPlugin;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Consumable;
 import io.papermc.paper.datacomponent.item.ItemLore;
@@ -11,7 +11,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 @SuppressWarnings("UnstableApiUsage")
 public abstract class Gun {
 
+	private final WeaponsPlugin plugin;
 	private final String id;
 	private final Component name;
 	private final String description;
@@ -36,7 +36,8 @@ public abstract class Gun {
 	private Material material = Material.WOODEN_HOE;
 	private ItemUseAnimation itemUseAnimation = ItemUseAnimation.BOW;
 
-	public Gun(String id, Component name, String description, int damage, double range, int headshotDamage, int ammo, float fireRate) {
+	public Gun(WeaponsPlugin plugin, String id, Component name, String description, int damage, double range, int headshotDamage, int ammo, float fireRate) {
+		this.plugin = plugin;
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -63,6 +64,10 @@ public abstract class Gun {
 		this.itemUseAnimation = itemUseAnimation;
 	}
 
+	public boolean canExecute(Player shooter) {
+		return plugin.getSettings().isEnableGuns();
+	}
+
 	public void onHit(Player shooter, LivingEntity target) {}
 
 	public void onLandHit(Player shooter, Location location) {}
@@ -76,7 +81,7 @@ public abstract class Gun {
 
 		gun.editPersistentDataContainer(pdc -> {
 			pdc.set(
-					new NamespacedKey(Guns.getInstance(), "gun"),
+					new NamespacedKey(WeaponsPlugin.getInstance(), "gun"),
 					PersistentDataType.STRING,
 					this.id
 			);
