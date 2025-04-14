@@ -39,6 +39,8 @@ public final class WeaponsPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+
+		loadSettings();
 		gunManager = new GunManager(this);
 
 
