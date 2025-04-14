@@ -5,6 +5,8 @@ import eu.mikart.guns.guns.Gun;
 import eu.mikart.guns.guns.GunType;
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Color;
@@ -39,6 +41,11 @@ public class WeaponInteractionListener implements Listener {
 			Player shooter = event.getPlayer();
 			String gunId = dataContainer.get(NamespacedKey.fromString("gun", WeaponsPlugin.getInstance()), PersistentDataType.STRING);
 			Gun gun = WeaponsPlugin.gunManager.getGun(gunId);
+
+			if (gun == null) {
+				shooter.sendActionBar(Component.text("The gun you're holding is invalid, it may be disabled.").color(NamedTextColor.RED));
+				return;
+			}
 
 			if (!gun.canExecute(shooter)) {
 				return;
